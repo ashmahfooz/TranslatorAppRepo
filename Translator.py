@@ -30,8 +30,14 @@ languages = {'afrikaans': 'af', 'albanian': 'sq', 'amharic': 'am', 'arabic': 'ar
 # select Box
 target_language = st.selectbox("Choose language to translate", list(languages.keys()))
 if st.button("Translate"):
-    if Text:
-        translated_text = translator.translate(Text, dest=languages[target_language])
-        st.write(f"Translated Text:{translated_text.text}")
-    else:
-        st.write(f"Please enter your text")
+    try:
+        if Text:
+            translated_text = translator.translate(Text, dest=languages[target_language])
+            st.write(f"Translated Text:{translated_text.text}")
+        else:
+            st.write("Please enter source text")
+    except:
+        print("Error")
+
+
+
