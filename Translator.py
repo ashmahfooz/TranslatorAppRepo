@@ -1,5 +1,6 @@
 import googletrans as trans
 import streamlit as st
+import time
 
 # Create a title of the page
 st.title("Translator App")
@@ -30,10 +31,12 @@ languages = {'afrikaans': 'af', 'albanian': 'sq', 'amharic': 'am', 'arabic': 'ar
 # select Box
 target_language = st.selectbox("Choose language to translate", list(languages.keys()))
 if st.button("Translate"):
+    with st.spinner("Please Wait"):
+        time.sleep(2)
     try:
         if Text:
             translated_text = translator.translate(Text, dest=languages[target_language])
-            st.write(f"Translated Text:{translated_text.text}")
+            st.success(f"Translated Text:{translated_text.text}")
         else:
             st.write("Please enter source text")
     except:
