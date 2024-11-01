@@ -2,12 +2,19 @@ import googletrans as trans
 import streamlit as st
 import time
 
-# Create a title of the page
-st.title("Translator App")
+# Set page title
+st.set_page_config(page_title="Translator App", page_icon="🌐")
+
+# Title and Description
+st.title("🌐 Translator App")
+st.write("Translate text easily between multiple languages.")
+
 # Translator Object
 translator = trans.Translator()
-# Text Area
-Text = st.text_area("Enter your text" )
+
+# Text Area for User Input
+text = st.text_area("Enter your text", placeholder="Type or paste your text here...")
+
 # Language Dictionary
 languages = {'afrikaans': 'af', 'albanian': 'sq', 'amharic': 'am', 'arabic': 'ar', 'armenian': 'hy',
              'azerbaijani': 'az', 'basque': 'eu', 'belarusian': 'be', 'bengali': 'bn', 'bosnian': 'bs',
@@ -28,19 +35,35 @@ languages = {'afrikaans': 'af', 'albanian': 'sq', 'amharic': 'am', 'arabic': 'ar
              'swahili': 'sw', 'swedish': 'sv', 'tajik': 'tg', 'tamil': 'ta', 'telugu': 'te', 'thai': 'th',
              'turkish': 'tr', 'ukrainian': 'uk', 'urdu': 'ur', 'uyghur': 'ug', 'uzbek': 'uz', 'vietnamese': 'vi',
              'welsh': 'cy', 'xhosa': 'xh', 'yiddish': 'yi', 'yoruba': 'yo', 'zulu': 'zu'}
-# select Box
-target_language = st.selectbox("Choose language to translate", list(languages.keys()))
-if st.button("Translate"):
-    with st.spinner("Please Wait"):
-        time.sleep(2)
+
+# Select Target Language
+target_language = st.selectbox("Choose language to translate to", list(languages.keys()))
+
+# Buttons
+col1, col2 = st.columns(2)
+with col1:
+    translate_button = st.button("Translate")
+with col2:
+    clear_button = st.button("Clear")
+
+# Translate Action
+if translate_button:
+    with st.spinner("Translating..."):
+        time.sleep(1)
     try:
-        if Text:
-            translated_text = translator.translate(Text, dest=languages[target_language])
-            st.success(f"Translated Text:{translated_text.text}")
+        if text:
+            # Detect source language
+            detected = translator.detect(text)
+            source_language = detected.lang
+            translated_text = translator.translate(text, src=source_language, dest=languages[target_language])
+            st.write(f"**Detected Language:** {trans.LANGUAGES.get(source_language, 'Unknown').capitalize()}")
+            st.success(f"**Translated Text:** {translated_text.text}")
         else:
-            st.write("Please enter source text")
-    except:
-        print("Error")
+            st.warning("Please enter some text to translate.")
+    except Exception as e:
+        st.error("An error occurred during translation. Please try again.")
+        st.write(e)
 
-
-
+# Clear Text
+if clear_button:
+    st.text_area("Enter your text", "", key="text_area_key")  # Clear text by resetting the text area
